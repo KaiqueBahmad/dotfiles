@@ -1,0 +1,13 @@
+#!/bin/bash
+# toggle-touchpad.sh - toggles the touchpad on/off via gsettings
+
+KEY="org.gnome.desktop.peripherals.touchpad send-events"
+CURRENT=$(gsettings get $KEY)
+
+if [ "$CURRENT" = "'enabled'" ]; then
+    gsettings set $KEY 'disabled'
+    echo "Touchpad disabled"
+else
+    gsettings set $KEY 'enabled'
+    echo "Touchpad enabled"
+fi

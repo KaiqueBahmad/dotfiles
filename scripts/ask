@@ -1,0 +1,79 @@
+#!/bin/bash
+
+# ask - Simple CLI to query DeepSeek API
+# Usage: ask "your question here"
+
+set -euo pipefail
+
+# Colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+NC='\033[0m'
+
+print_error()   { echo -e "${RED}✗${NC} $1" >&2; }
+print_info()    { echo -e "${BLUE}ℹ${NC} $1"; }
+print_success() { echo -e "${GREEN}✓${NC} $1"; }
+
+# Check for jq
+if ! command -v jq &>/dev/null; then
+  print_error "'jq' is required. Install with: sudo apt install jq"
+  exit 1
+fi
+
+# Check for API key
+if [ -z "${DEEPSEEK_API_KEY:-}" ]; then
+  print_error "DEEPSEEK_API_KEY is not set."
+  echo "Use: export DEEPSEEK_API_KEY='your-key'"
+  exit 1
+fi
+
+# Check user input
+if [ $# -eq 0 ]; then
+  print_error "Usage: ask \"your question here\""
+  exit 1
+fi
+
+USER_MESSAGE="$*"
+SYSTEM_PROMPT="You are a concise, knowledgeable assistant. Answer clearly and directly."
+
+# Safely build JSON body with jq
+REQUEST_BODY=$(jq -n \
+  --arg sys "$SYSTEM_PROMPT" \
+  --arg usr "$USER_MESSAGE" \
+  '{
+    model: "deepseek-chat",
+    messages: [
+      {role: "system", content: $sys},
+      {role: "user", content: $usr}
+    ],
+    max_tokens: 500,
+    temperature: 0.7
+  }')
+
+# Make API request
+RESPONSE=$(curl -sS -X POST "https://api.deepseek.com/v1/chat/completions" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $DEEPSEEK_API_KEY" \
+  -d "$REQUEST_BODY")
+
+# Validate response
+if [ -z "$RESPONSE" ]; then
+  print_error "Empty response from API."
+  exit 1
+fi
+
+# Try to parse output
+ANSWER=$(echo "$RESPONSE" | jq -r '.choices[0].message.content // empty' 2>/dev/null || true)
+
+if [ -z "$ANSWER" ] || [ "$ANSWER" = "null" ]; then
+  print_error "Failed to extract response."
+  echo "Raw API output:"
+  echo "$RESPONSE"
+  exit 1
+fi
+
+echo "parsing"
+
+glow <<< "$ANSWER"
+
