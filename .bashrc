@@ -87,24 +87,6 @@ fi
 # colored GCC warnings and errors
 #export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 
-# some more ls aliases
-alias ll='ls -alF'
-alias la='ls -A'
-alias l='ls -CF'
-
-# Add an "alert" alias for long running commands.  Use like so:
-#   sleep 10; alert
-alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
-
-# Alias definitions.
-# You may want to put all your additions into a separate file like
-# ~/.bash_aliases, instead of adding them here directly.
-# See /usr/share/doc/bash-doc/examples in the bash-doc package.
-
-if [ -f ~/.bash_aliases ]; then
-    . ~/.bash_aliases
-fi
-
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
 # sources /etc/bash.bashrc).
@@ -115,78 +97,11 @@ if ! shopt -oq posix; then
     . /etc/bash_completion
   fi
 fi
-export PATH="$HOME/.local/bin:$PATH"
-#export PATH="$PATH:/opt/java/jdk1.7.0_80/bin"
-export PATH="$PATH:/opt/nvim/bin"
-export PATH="$PATH:/home/kaique/scripts"
-export PATH="$PATH:/opt/flutter/bin"
-export PATH="$PATH:/opt/webstorm/bin"
-export PATH=$PATH:~/go/bin
-export PATH="$PATH:/home/kaique/scripts"
-export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
 
-export DEPOT_INSTALL_DIR="/home/kaique/.depot/bin"
-export DEPOT_PROJECT_ID=""
-export PATH="$DEPOT_INSTALL_DIR:$PATH"
-
-alias cpc="xclip -sel c < "
-alias tocopy='xclip -selection clipboard'
-export DEEPSEEK_API_KEY=''
-
-. <(asdf completion bash)
-~/scripts/bash_completion.bash
-
-# Iniciar agente SSH se não estiver rodando
-if ! pgrep -u "$USER" ssh-agent > /dev/null; then
-        eval "$(ssh-agent -s)"
-        fi
-
-# Adicionar chaves automaticamente (sem pedir senha toda vez)
-ssh-add -l &>/dev/null || {
-    ssh-add ~/.ssh/keys/example 2>/dev/null
-}
-
-#if command -v tmux &> /dev/null && [ -z "$TMUX" ]; then
-#    tmux a || tmux
-#fi
-
-eval "$(direnv hook bash)"
-
-short_pwd() {
-  local path="${PWD/#$HOME/\~}"
-  local IFS='/'
-  read -ra parts <<< "$path"
-  local len=${#parts[@]}
-  if [ $len -le 4 ]; then
-    echo "$path"
-  else
-    echo "${parts[0]}/${parts[1]}/${parts[2]}/.../${parts[$((len-1))]}"
-  fi
-}
-
-PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]$(short_pwd)\[\033[00m\]\$ '
-
-export JAVA_HOME=$(asdf where java)
-
-
-#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
-export SDKMAN_DIR="$HOME/.sdkman"
-[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
-
-# Timetracker PATH
-export PATH="/home/kaique/projetos/timetracker/bin:$PATH"
-
-gcc-run() { local name="${1%.c}"; gcc "$1" -o "$name" && echo "--- END OF COMPILATION ---"  && ./"$name"; }
-
-alias claude20='ASDF_NODEJS_VERSION=20.18.0 claude'
-
-ligar_vpn() {
-    sudo openvpn --config /home/kaique/vpn/certificado/client.ovpn --daemon --log /var/log/openvpn.log
-}
-
-desligar_vpn() {
- sudo killall openvpn
-}
-
-
-
+# ::: PERSONAL CONFIG STARTS HERE :::
+# Load all bash configuration snippets
+if [[ -d "$HOME/.bashrc.d" ]]; then
+    for file in "$HOME"/.bashrc.d/*.sh; do
+        [[ -r "$file" ]] && source "$file"
+    done
+fi
