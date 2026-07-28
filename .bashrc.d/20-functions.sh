@@ -25,3 +25,7 @@ kill-all-port() {
     fi
     sudo kill -9 $(sudo lsof -t -i:$1)
 }
+
+tldr() {
+  command tldr "$@" | sed -e '/./,$!d' -e ':a' -e '/^\n*$/{$d;N;ba' -e '}'
+}

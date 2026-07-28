@@ -29,3 +29,5 @@ export SDKMAN_DIR="$HOME/.sdkman"
 [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
 
 git config --global alias.root 'rev-parse --show-toplevel'
+
+git config --global core.editor "vim"
