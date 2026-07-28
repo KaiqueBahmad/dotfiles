@@ -1,4 +1,4 @@
-. <(asdf completion bash)
+#. <(asdf completion bash)
 # Iniciar agente SSH se não estiver rodando
 if ! pgrep -u "$USER" ssh-agent > /dev/null; then
 	eval "$(ssh-agent -s)"
