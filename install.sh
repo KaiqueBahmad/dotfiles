@@ -1,18 +1,17 @@
 #!/usr/bin/env bash
 #
-# install.sh — symlinks these dotfiles into $HOME.
+# install.sh — copies these dotfiles into $HOME.
 # Any pre-existing file/dir that would be overwritten is backed up
-# (zipped) into ~/dotfiles_backup_<timestamp>.zip before being replaced.
+# (zipped) into ~/.oldenv.zip before being replaced.
 
 set -euo pipefail
 
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-TIMESTAMP="$(date +%Y%m%d%H%M%S)"
 BACKUP_DIR="$(mktemp -d)"
-BACKUP_ZIP="$HOME/dotfiles_backup_${TIMESTAMP}.zip"
+BACKUP_ZIP="$HOME/.oldenv.zip"
 
 # repo path -> $HOME-relative destination
-LINKS=(
+FILES=(
     ".bashrc:.bashrc"
     ".bashrc.d:.bashrc.d"
     ".vimrc:.vimrc"
@@ -28,14 +27,9 @@ command -v zip >/dev/null 2>&1 || { echo "zip is required but not installed. Abo
 
 backed_up=0
 
-for entry in "${LINKS[@]}"; do
+for entry in "${FILES[@]}"; do
     src="${DOTFILES_DIR}/${entry%%:*}"
     dest="$HOME/${entry#*:}"
-
-    if [[ -L "$dest" && "$(readlink "$dest")" == "$src" ]]; then
-        info "Already linked: $dest"
-        continue
-    fi
 
     if [[ -e "$dest" || -L "$dest" ]]; then
         warn "Backing up existing $dest"
@@ -45,12 +39,12 @@ for entry in "${LINKS[@]}"; do
     fi
 
     mkdir -p "$(dirname "$dest")"
-    ln -s "$src" "$dest"
-    info "Linked $dest -> $src"
+    cp -r "$src" "$dest"
+    info "Copied $src -> $dest"
 done
 
 if [[ "$backed_up" -eq 1 ]]; then
-    (cd "$BACKUP_DIR" && zip -r -q "$BACKUP_ZIP" .)
+    (cd "$BACKUP_DIR" && zip -r -q -y "$BACKUP_ZIP" .)
     info "Backup of replaced files saved to $BACKUP_ZIP"
 fi
 
