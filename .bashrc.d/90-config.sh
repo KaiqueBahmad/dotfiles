@@ -1,11 +1,8 @@
 . <(asdf completion bash)
-~/scripts/bash_completion.bash
 # Iniciar agente SSH se não estiver rodando
 if ! pgrep -u "$USER" ssh-agent > /dev/null; then
 	eval "$(ssh-agent -s)"
 fi
-
-eval "$(direnv hook bash)"
 
 
 short_pwd() {
@@ -25,8 +22,8 @@ PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[0
 export JAVA_HOME=$(asdf where java)
 
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
-export SDKMAN_DIR="$HOME/.sdkman"
-[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
+#export SDKMAN_DIR="$HOME/.sdkman"
+#[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
 
 git config --global alias.root 'rev-parse --show-toplevel'
 
