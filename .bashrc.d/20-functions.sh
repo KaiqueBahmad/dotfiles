@@ -14,9 +14,9 @@ gcc-run() { local name="${1%.c}"; gcc "$1" -o "$name" && echo "--- END OF COMPIL
 
 
 
-npx() {
-  "$(asdf where nodejs)/bin/npx" "$@"
-}
+#npx() {
+#  "$(asdf where nodejs)/bin/npx" "$@"
+#}
 
 kill-all-port() {
     if [ -z "$1" ]; then

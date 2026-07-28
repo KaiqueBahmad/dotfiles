@@ -19,7 +19,7 @@ short_pwd() {
 
 PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]$(short_pwd)\[\033[00m\]\$ '
 
-export JAVA_HOME=$(asdf where java)
+#export JAVA_HOME=$(asdf where java)
 
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 #export SDKMAN_DIR="$HOME/.sdkman"
